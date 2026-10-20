@@ -14,7 +14,7 @@ public class MainApp extends Application {
         Parent root = loader.load();       // load once
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("MainApp");
+        stage.setTitle("Mouse Camera");
         stage.show();
     }
 

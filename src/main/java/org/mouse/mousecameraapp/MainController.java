@@ -19,6 +19,8 @@ import java.nio.file.StandardCopyOption;
 
 public class MainController {
     @FXML
+    private Label starting;
+    @FXML
     private ToggleButton camera, Landmarks;
     @FXML
     private Button launch, signsdwn, configdwn, train, test;
@@ -144,6 +146,7 @@ public class MainController {
     }
     @FXML
     private void launch(){
+        starting.setText("Starting...");
         if(pyProcess != null && pyProcess.isAlive()) return;
         Path python = Path.of("venv", "Scripts", "python.exe").toAbsolutePath();
         Path script = Path.of("src", "main", "java", "org", "mouse", "mousecameraapp",
