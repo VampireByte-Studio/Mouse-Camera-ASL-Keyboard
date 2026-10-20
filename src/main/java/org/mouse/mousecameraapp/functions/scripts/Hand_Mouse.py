@@ -20,10 +20,44 @@ SAMPLES_FILE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirnam
 #TOGGLE KEYBOARD
 ASL = True
 recent = deque(maxlen=SMOOTH_FRAMES)
-#Toggle camera tab
-camera = True
-#toggle visible landmarks
-DRAWlandmarks = True
+
+
+def find_config():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        if os.path.exists(os.path.join(d, "pom.xml")):      # project root
+            return os.path.join(d, "config.json")
+        parent = os.path.dirname(d)
+        if parent == d:                                      # hit the drive root, give up
+            return os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+        d = parent
+
+CONFIG_PATH = find_config()
+
+try:
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)
+except (OSError, json.JSONDecodeError):
+    cfg = {}
+
+camera = cfg.get("camera", True)
+DRAWlandmarks = cfg.get("landmarks", False)
+print("config:", CONFIG_PATH, camera, DRAWlandmarks, flush=True)
+
+_last_mtime = 0
+def reload_config():
+    global _last_mtime
+    try:
+        m = os.path.getmtime(CONFIG_PATH)
+        if m != _last_mtime:
+            with open(CONFIG_PATH) as f:
+                cfg.update(json.load(f))
+            _last_mtime = m
+            print("config:", cfg, flush=True)
+    except (OSError, json.JSONDecodeError):
+        pass
+
+reload_config()
 #time related values
 click_cd = 0.4
 type_cd = 1
