@@ -1,142 +1,163 @@
-# 🖱️ Camera Mouse
+# 🖱️ Mouse-Camera-ASL-Keyboard
 
-A Python project that lets you control your computer's mouse using hand gestures detected through a webcam.
+Control your computer with your hand through a webcam. Move the cursor, click with gestures, and train your own ASL signs to use as a keyboard.
 
-Instead of using a physical mouse, the project uses computer vision to track your hand and translate its movements and gestures into mouse actions.
+The hand tracking runs in **Python** (OpenCV + MediaPipe). A **JavaFX** control panel lets you launch each script, change settings, and export your data.
 
 ## ✨ Features
 
-🖐️ Real-time hand tracking through a webcam
-
-🖱️ Move the mouse using your hand
-
-👆 Gesture-based clicking
-
-✌️ Support for multiple hand gestures
-
-🎥 Live camera feed
-
-⚡ Real-time gesture detection
-
-🧠 Uses computer vision to identify hand landmarks
+- 🖐️ Real-time hand tracking through a webcam
+- 🖱️ Move the mouse with your index finger
+- 👆 Gesture-based left and right clicking
+- 🔤 Train your own ASL signs and test them live
+- ⚙️ Control panel with Camera and Landmarks toggles
+- 💾 Download your trained signs (`signs.jsonl`) and settings (`config.json`)
 
 ## 🛠️ Technologies
 
-This project is built using:
-
-Python
-
-OpenCV — camera input and image processing
-
-MediaPipe — hand tracking and landmark detection
-
-PyAutoGUI — controlling the computer mouse
+| Part | Tools |
+|------|-------|
+| Hand tracking | Python 3.12, OpenCV, MediaPipe, PyAutoGUI |
+| Control panel | Java, JavaFX, Maven |
+| Settings | Gson (`config.json`) |
 
 ## 📋 Requirements
 
-Make sure you have Python installed on your computer.
-
-Install the required packages with:
-
-pip install opencv-python mediapipe pyautogui
+- **Python 3.12** (MediaPipe and OpenCV may not support the newest Python releases yet)
+- **JDK 21 or newer** and Maven (the included `mvnw` wrapper works)
+- A webcam
 
 ## 🚀 Getting Started
-1. Clone the repository
-git clone https://github.com/VampireByte-Studio/Mouse-Camera-Project.git
 
-2. Install dependencies
-opencv
-mediapipe
-pyautogui
+**1. Clone the repository**
+
+```
+git clone https://github.com/VampireByte-Studio/Mouse-Camera-ASL-Keyboard.git
+cd Mouse-Camera-ASL-Keyboard
+```
+
+**2. Create a Python environment and install the packages**
+
+```
+py -3.12 -m venv venv
+venv\Scripts\activate
+pip install opencv-python mediapipe pyautogui numpy
+```
+
+Keep the environment named `venv` in the project root. The app looks for `venv\Scripts\python.exe`.
+
+**3. Add the MediaPipe model**
+
+Download `hand_landmarker.task` from the [MediaPipe Hand Landmarker page](https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker) and place it next to the Python scripts:
+
+```
+src/main/java/org/mouse/mousecameraapp/functions/scripts/hand_landmarker.task
+```
+
+**4. Run the app**
+
+Open the project in IntelliJ IDEA, let Maven finish loading, and run `MainApp`.
+
+## 🕹️ Using the App
+
+| Button | What it does | Script |
+|--------|--------------|--------|
+| **Launch** | Starts the hand-controlled mouse | `Hand_Mouse.py` |
+| **Train** | Record your own signs | `Hand_Recorder.py` |
+| **Test** | Check how well your signs are recognised | `Hand_Tester.py` |
+| **Camera / Landmarks** | Toggle the camera preview and landmark dots | writes `config.json` |
+| **Download Signs File** | Save a copy of `signs.jsonl` | |
+| **Download Config File** | Save a copy of `config.json` | |
+
+Use **Train** before **Test**: the tester compares your hand against the samples in `signs.jsonl`, so it needs recorded signs first. Only one script can use the webcam at a time, so close one before starting another.
+
+You can also run the scripts without the app:
+
+```
+venv\Scripts\python.exe src\main\java\org\mouse\mousecameraapp\functions\scripts\Hand_Mouse.py
+```
+
+## 🎮 Mouse Controls
+
+To control the mouse you have to program using the Train module
+1 - controls left click
+2 - controls right click
+3- Switch between ASL and Mouse
 
 
-pip install opencv-python mediapipe pyautogui
+## 🧠 Train Module
 
-3. Train project
+To use properly launch either via java app or manually run the script, Press the letter/number you want to record.
 
-Hand_Record.py
-
-4. Test project
-
-Hand Tester.py
-
-5. Run program
-   Hand_Mouse.py
-
-Your webcam should open and begin tracking your hand.
-
-## 🎮 Controls + 🧠 How It Works
-
-You can modify the gesture detection code to create your own controls.
+then press "Spacebar" to start recording hand positions to train, to test it you can run the test script and input the expected results 
+and see if the tester is picking up the correct inputs.
 
 
-The project follows a simple pipeline:
 
-Webcam
-   ↓
-OpenCV
-   ↓
-MediaPipe Hand Tracking
-   ↓
-Hand Landmark Detection
-   ↓
-Gesture Recognition
-   ↓
-Mouse Movement / Click
+## 🧠 How It Works
 
+```
+Webcam → OpenCV → MediaPipe hand landmarks → gesture / sign recognition → mouse movement, click, or letter
+```
 
-MediaPipe detects key points on the hand, such as the fingertips and joints.
+- MediaPipe finds 21 landmarks on your hand in each frame.
+- For the mouse, the index fingertip position is mapped to screen coordinates.
+- For ASL signs, the landmarks are normalised and compared with your recorded samples in `signs.jsonl`. The closest matches vote on the sign.
 
-The program then uses those landmarks to determine the user's hand position and gesture.
+## ⚙️ Configuration
 
-The pointer fingertip can be used as the mouse cursor position:
+The control panel writes `config.json` in the project root:
 
-Pointer Finger
-     ↓
-Hand Landmark
-     ↓
-Screen Coordinates
-     ↓
-Mouse Position
+```json
+{
+  "camera": true,
+  "landmarks": false
+}
+```
 
-To left click overlap the Middle finger with the Point Finger (GREEN OVER BLUE DOTS)
-and for Right click overlap the Thumb finger over Pinky finger (Yellow OVER YELLOW DOTS)
+`Hand_Mouse.py` finds this file on its own (it looks for the folder containing `pom.xml`) and reads it when it starts.
+
+## 🗂️ Project Layout
+
+```
+Mouse-Camera-ASL-Keyboard/
+├── pom.xml
+├── signs.jsonl                  your recorded signs
+├── config.json                  created by the app
+├── venv/                        Python 3.12 environment (not committed)
+└── src/main/java/org/mouse/mousecameraapp/
+    ├── MainApp.java             JavaFX entry point
+    ├── MainController.java      button handlers
+    └── functions/
+        ├── ConfigWriter.java
+        └── scripts/
+            ├── Hand_Mouse.py
+            ├── Hand_Recorder.py
+            ├── Hand_Tester.py
+            └── hand_landmarker.task
+```
+
+## 🔧 Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| `ModuleNotFoundError` or a numpy import error | The wrong Python is being used. Make sure the environment is Python 3.12 and is named `venv` |
+| `FileNotFoundError: signs.jsonl` | Record some signs with **Train** first, or copy an existing `signs.jsonl` into the project root |
+| `Unable to open file ... hand_landmarker.task` | Put the model file next to the scripts (step 3) |
+| Camera window never appears | Another program or script is using the webcam. Close it and try again |
+| Nothing happens when a button is pressed | Check the Run window in IntelliJ for `PY:` lines, which show the Python output |
 
 ## ⚠️ Notes
 
-Because this project relies on a webcam and real-time computer vision, performance can depend on:
-
-Camera quality
-
-Lighting conditions
-
-CPU/GPU performance
-
-Distance between your hand and camera
-
-Background complexity
-
-Good lighting and a clear view of your hand generally produce better tracking.
+Performance depends on camera quality, lighting, CPU/GPU speed, distance from the camera, and background complexity. Good lighting and a clear view of your hand give the best tracking.
 
 ## 🔒 Privacy
 
-This project processes the webcam feed locally for hand tracking. It does not need to upload your camera footage to an external server.
+The webcam feed is processed locally. Nothing is uploaded to an external server.
 
-Make sure you understand and trust any dependencies you install before running the project.
 
-## TODO
-- ADD MOTION LETTERS
-- CREATE APP CONTROLS
-  
 ## 📄 License
 
-This project is intended for personal, educational, and non-profit use only.
+This project is for personal, educational, and non-profit use only.
 
-You may use, copy, modify, and distribute this code for projects that are not intended to generate monetary profit.
-
-Commercial use is prohibited without prior written permission from the copyright holder.
-
-If you would like to use this project commercially, please contact VampireByte first.
-
-
-
+You may use, copy, modify, and distribute this code for projects that are not intended to generate monetary profit. Commercial use is prohibited without prior written permission from the copyright holder. To use it commercially, contact VampireByte first.
