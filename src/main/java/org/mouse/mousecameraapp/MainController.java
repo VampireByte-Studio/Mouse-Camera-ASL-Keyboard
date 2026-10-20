@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.mouse.mousecameraapp.functions.ConfigWriter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,16 +24,21 @@ public class MainController {
     private Button launch, signsdwn, configdwn, train, test;
     private final Path signsFile = Path.of("signs.jsonl");
     private Process pyProcess;
+    private final ConfigWriter config = new ConfigWriter();
     @FXML
     private void togglecamera(){
-
+        config.get().camera = camera.isSelected();
+        config.save();
     }
     @FXML
     private void togglelandmarks(){
+        config.get().landmarks = Landmarks.isSelected();
+        config.save();
 
     }
     @FXML
     private void dwnsigns(){
+        System.out.println("DWN SIGNS PRESSED");
         if (!Files.exists(signsFile)) {
             System.out.println("NO FILE FOUND");
             return;
@@ -54,8 +60,24 @@ public class MainController {
 
     }
     @FXML
-    private void dwnconfig(){
+    private void dwnconfig() {
+        config.save();   // make sure config.json has the latest toggle states
 
+        Path configFile = Path.of(System.getProperty("user.dir"), "config.json");
+
+        FileChooser c = new FileChooser();
+        c.setTitle("Save config");
+        c.setInitialFileName("config.json");
+        c.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON", "*.json"));
+
+        File dest = c.showSaveDialog((Stage) configdwn.getScene().getWindow());   // null if cancelled
+        if (dest != null) {
+            try {
+                Files.copy(configFile, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
     @FXML
     private void train(){

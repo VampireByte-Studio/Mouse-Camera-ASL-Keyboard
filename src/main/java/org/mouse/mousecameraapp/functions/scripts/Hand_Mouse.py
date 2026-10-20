@@ -194,7 +194,7 @@ while True:
         recent.clear()
     if camera:
         cv2.imshow("Webcam", frame) # turns camera tab on
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('9'):
         break
 
 cap.release()

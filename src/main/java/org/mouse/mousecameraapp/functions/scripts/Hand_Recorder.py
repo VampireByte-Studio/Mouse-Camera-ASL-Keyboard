@@ -93,6 +93,8 @@ def main():
             recording = not recording
         elif key != 255 and chr(key).isalnum():
             label = chr(key).upper()   # A-Z / 0-9 = set label
+        if cv2.waitKey(1) & 0xFF == ord('9'):
+            break
 
     landmarker.close()
     cap.release()
