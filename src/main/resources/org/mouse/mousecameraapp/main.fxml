@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="179.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mouse.mousecameraapp.MainController">
+   <children>
+      <ToggleButton fx:id="camera" layoutX="108.0" layoutY="14.0" mnemonicParsing="false" onAction="#togglecamera" text="Camera" />
+      <ToggleButton fx:id="Landmarks" layoutX="90.0" layoutY="56.0" mnemonicParsing="false" onAction="#togglelandmarks" text="Landmarks" />
+      <Button fx:id="launch" layoutX="112.0" layoutY="361.0" mnemonicParsing="false" onAction="#launch" text="Launch" />
+      <Button fx:id="signsdwn" layoutX="47.0" layoutY="251.0" mnemonicParsing="false" onAction="#dwnsigns" text="Download Signs File" />
+      <Button fx:id="configdwn" layoutX="43.0" layoutY="286.0" mnemonicParsing="false" onAction="#dwnconfig" text="Download Config File" />
+      <Separator layoutX="-27.0" layoutY="242.0" prefWidth="200.0" />
+      <Separator layoutX="-27.0" layoutY="350.0" prefWidth="200.0" />
+      <Separator layoutY="100.0" prefWidth="200.0" />
+      <Button fx:id="train" layoutX="125.0" layoutY="124.0" mnemonicParsing="false" onAction="#train" text="Train" />
+      <Button fx:id="test" layoutX="127.0" layoutY="175.0" mnemonicParsing="false" onAction="#test" text="Test" />
+   </children>
+</AnchorPane>

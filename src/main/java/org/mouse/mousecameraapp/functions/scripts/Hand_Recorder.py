@@ -1,14 +1,14 @@
 import json
 import time
-
+import os, sys
 import cv2
 import numpy as np
 import mediapipe as mp
 from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision
 
-MODEL_PATH = "hand_landmarker.task"
-OUTPUT_FILE = "signs.jsonl"
+MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "hand_landmarker.task")
+OUTPUT_FILE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "signs.jsonl")
 CAPTURE_INTERVAL = 0.10  # seconds between samples while recording
 
 

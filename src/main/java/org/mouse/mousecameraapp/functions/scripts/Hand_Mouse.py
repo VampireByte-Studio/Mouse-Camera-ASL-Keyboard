@@ -1,5 +1,5 @@
 import json
-
+import sys, os
 import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -13,10 +13,12 @@ from collections import Counter, deque
 K = 5
 UNKNOWN_DIST = 1.0
 SMOOTH_FRAMES = 7
-SAMPLES_FILE = "signs.jsonl"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(SCRIPT_DIR, "hand_landmarker.task")
+SAMPLES_FILE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "signs.jsonl")
 #CONFIG
 #TOGGLE KEYBOARD
-ASL = False
+ASL = True
 recent = deque(maxlen=SMOOTH_FRAMES)
 #Toggle camera tab
 camera = True
@@ -37,7 +39,7 @@ if not cap.isOpened():
     raise RuntimeError("No capturing devices found")
 
 # hands
-base_options = python.BaseOptions(model_asset_path='hand_landmarker.task')
+base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
 options = vision.HandLandmarkerOptions(
     base_options=base_options,
     running_mode=vision.RunningMode.VIDEO,
