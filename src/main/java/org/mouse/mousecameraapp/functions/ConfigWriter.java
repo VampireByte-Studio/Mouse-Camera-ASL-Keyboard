@@ -8,29 +8,34 @@ import java.nio.file.*;
 
 public class ConfigWriter {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private final Path file;
+    private final Path file = Path.of(System.getProperty("user.dir"), "config.json");
+    private Config Config;
 
-    public ConfigWriter(Path file) {
-        this.file = file.toAbsolutePath();
+    public Config get() {
+        if (Config == null) Config = load();
+        return Config;
     }
 
-    public Path getFile() { return file; }
-
-    public Config load() {
+    private Config load() {
         try {
             if (Files.exists(file)) {
-                return GSON.fromJson(Files.readString(file), Config.class);
+                Config s = GSON.fromJson(Files.readString(file), Config.class);
+                if (s != null) return s;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Config();   // defaults if missing or broken
+        return new Config();
     }
 
-    public void save(Config s) throws IOException {
-        // write to a temp file, then rename, so Python never reads a half-written file
-        Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
-        Files.writeString(tmp, GSON.toJson(s), StandardCharsets.UTF_8);
-        Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+    public void save() {
+        try {
+            // write to a temp file, then rename, so Python never reads a half-written file
+            Path tmp = file.resolveSibling("config.json.tmp");
+            Files.writeString(tmp, GSON.toJson(get()), StandardCharsets.UTF_8);
+            Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

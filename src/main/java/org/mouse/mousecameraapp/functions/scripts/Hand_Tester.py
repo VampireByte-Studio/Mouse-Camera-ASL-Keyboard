@@ -151,6 +151,8 @@ def main():
             expected, hits, total = None, 0, 0
         elif key != 255 and chr(key).isalnum():     # set expected sign
             expected, hits, total = chr(key).upper(), 0, 0
+        if cv2.waitKey(1) & 0xFF == ord('9'):
+            break
 
     landmarker.close()
     cap.release()
